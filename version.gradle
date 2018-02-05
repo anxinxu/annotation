@@ -1,0 +1,26 @@
+def versions = [
+        'minSdk'         : 14,
+        'targetSdk'      : 26,
+        'compileSdk'     : 26,
+        'support_version': '26.1.0'
+]
+
+ext.versions = versions
+
+def deps = [
+        'support': [
+                'appcompat'        : "com.android.support:appcompat-v7:${versions.support_version}",
+                'annotations'      : "com.android.support:support-annotations:${versions.supportLibrary}",
+                'constraint_layout': 'com.android.support.constraint:constraint-layout:1.0.2',
+                'test'             : [
+                        'runner'  : 'com.android.support.test:runner:1.0.1',
+                        'espresso': [
+                                'espresso_core' : 'com.android.support.test.espresso:espresso-core:3.0.1'
+                        ]
+                ]
+
+        ],
+        junit    : 'junit:junit:4.12',
+]
+
+ext.deps = deps
