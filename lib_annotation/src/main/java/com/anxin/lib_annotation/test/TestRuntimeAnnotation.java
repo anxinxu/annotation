@@ -1,4 +1,4 @@
-package com.anxin.lib_annotation;
+package com.anxin.lib_annotation.test;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * <p>
  */
 
-@Retention(RetentionPolicy.CLASS)
+@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface TestClassAnnotation {
+public @interface TestRuntimeAnnotation {
 }
