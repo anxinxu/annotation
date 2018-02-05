@@ -8,5 +8,5 @@ import com.anxin.lib_annotation.TestSourceAnnotation;
  */
 
 @TestSourceAnnotation
-public class TestAnnotationClass {
+public class TestSourceAnnotationClass {
 }
