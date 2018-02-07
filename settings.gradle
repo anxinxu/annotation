@@ -1,1 +1,1 @@
-include ':app', ':lib_annotation_compiler', ':lib_annotation'
+include ':app', ':lib_annotation_compiler', ':lib_annotation', ':viewinject'

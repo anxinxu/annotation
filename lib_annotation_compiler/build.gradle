@@ -2,6 +2,9 @@ apply plugin: 'java-library'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation deps.auto.service
+    implementation deps.javapoet
+    implementation project(':lib_annotation')
 }
 
 sourceCompatibility = "1.8"
