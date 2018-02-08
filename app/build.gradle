@@ -16,6 +16,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -27,5 +31,5 @@ dependencies {
     androidTestImplementation deps.support.test.espresso.espresso_core
     annotationProcessor project(':lib_annotation_compiler')
     implementation project(':lib_annotation')
-    implementation project(':viewinject')
+    implementation project(':inject')
 }

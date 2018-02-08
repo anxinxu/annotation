@@ -10,7 +10,6 @@ import com.squareup.javapoet.ClassName;
 import com.squareup.javapoet.FieldSpec;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
-import com.squareup.javapoet.ParameterizedTypeName;
 import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
@@ -20,7 +19,6 @@ import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,13 +29,9 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.Modifier;
-import javax.lang.model.element.Name;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.tools.Diagnostic.Kind;
-
-;
 
 /**
  * Created by anxin on 2018/2/5.
@@ -47,7 +41,7 @@ import javax.tools.Diagnostic.Kind;
 @AutoService(Processor.class)
 public class BindViewProcessor extends AbstractProcessor {
 
-    private static final ClassName INJECT_CLASS_NAME = ClassName.get("com.anxin.viewinject", "Inject");
+    private static final ClassName INJECT_CLASS_NAME = ClassName.get("com.anxin.inject", "Unbinder");
 
     private Elements typeUtils;
 
@@ -121,29 +115,24 @@ public class BindViewProcessor extends AbstractProcessor {
         BindView tAnnotation = typeElement.getAnnotation(BindView.class);
         try {
             int tValue = tAnnotation.value();
-            note("element : %s , annotation : %s , value : %d", typeElement, tAnnotation, tValue);
             TypeElement tTypeElement = (TypeElement) typeElement.getEnclosingElement();
-            Name tQualifiedName = tTypeElement.getQualifiedName();
-            Element tEnclosingElement = typeElement.getEnclosingElement();
-            TypeMirror tTypeMirror = typeElement.asType();
-            List<? extends Element> tAllMembers = typeUtils.getAllMembers(tTypeElement);
-            Name tSimpleName = typeElement.getSimpleName();
-
-            note("simple name : %s , qualified name : %s , enclosing element simple name : %s , enclosing element : %s , type mirror : %s , type element : %s , all members : %s", tSimpleName, tQualifiedName, tEnclosingElement.getSimpleName(), tEnclosingElement, tTypeElement, tTypeMirror, tAllMembers.toString());
             ClassName targetClass = ClassName.get(tTypeElement);
-            ParameterizedTypeName injectInterface = ParameterizedTypeName.get(INJECT_CLASS_NAME, targetClass);
-            TypeSpec.Builder tBuilder = TypeSpec.classBuilder(String.format("%s_Inject", tTypeElement.getSimpleName()))
+            TypeSpec.Builder tBuilder = TypeSpec.classBuilder(String.format("%s_BindView", tTypeElement.getSimpleName()))
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .addJavadoc("don't edit this code!\n")
-                    .addSuperinterface(injectInterface);
-            MethodSpec injectView = MethodSpec.methodBuilder("injectView")
-                    .addAnnotation(Override.class)
+                    .addSuperinterface(INJECT_CLASS_NAME);
+            MethodSpec unbind = MethodSpec.methodBuilder("unbind")
                     .addModifiers(Modifier.PUBLIC)
+                    .addAnnotation(Override.class)
                     .returns(void.class)
-                    .addParameter(targetClass, "target", Modifier.FINAL)
-                    .addStatement("$s",tSimpleName)
                     .build();
-            tBuilder.addMethod(injectView);
+            MethodSpec constructor = MethodSpec.constructorBuilder()
+                    .addModifiers(Modifier.PUBLIC)
+                    .addParameter(targetClass, "target", Modifier.FINAL)
+                    .addStatement("$L.$L = $L.findViewById($L)", "target", typeElement, "target", tValue)
+                    .build();
+            tBuilder.addMethod(unbind);
+            tBuilder.addMethod(constructor);
             return JavaFile.builder(typeUtils.getPackageOf(typeElement).getQualifiedName().toString(), tBuilder.build()).build();
 
         } catch (Exception e) {

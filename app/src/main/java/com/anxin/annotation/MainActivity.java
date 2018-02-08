@@ -5,6 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.anxin.inject.Inject;
+import com.anxin.inject.Unbinder;
 import com.anxin.lib_annotation.BindView;
 import com.anxin.lib_annotation.test.Test;
 
@@ -21,5 +23,11 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         new Test_MainActivity(this,"anxin");
         Log.d(TAG,"count = " + count);
+        Unbinder tBind = Inject.bind(this);
+        mTextView.setOnClickListener((v)->
+                mTextView.setText("click hello world")
+        );
     }
+
+
 }
